@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { v4 as uuid } from 'uuid'
 import { FaFolder, FaFolderPlus } from "react-icons/fa";
 import { FaImage } from "react-icons/fa6";
+import { MdClose } from "react-icons/md";
 
 type displayFoldersType = {
     _id: string;
@@ -38,7 +39,7 @@ const Home = () => {
     const [newFolder, setNewFolder] = useState('');
     const [isNewFolder, setIsNewFolder] = useState(false);
     const [error, setError] = useState('');
-    const [isDialogOpen, setIsDialogOpen] = useState(true)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
     const navigate = useNavigate();
 
     const setQueryParam = (key: string, value: string) => {
@@ -167,6 +168,7 @@ const Home = () => {
 const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImages, setDisplayImages }) => {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -177,7 +179,7 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
 
     const handleUpload = async () => {
         try {
-
+            setIsLoading(true)
             const formData = new FormData();
             selectedImages.forEach((image) => {
                 formData.append('images', image);
@@ -192,18 +194,31 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
 
             const newDisplayImages = displayImages ? [response.data.data, ...displayImages] : [response.data.data.folder];
             setDisplayImages(newDisplayImages);
+            setSelectedImages([]);
             onClose();
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 p-5 overflow-hidden flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-10 p-5 overflow-hidden flex items-center justify-center bg-black bg-opacity-50">
+            {isLoading && <div className="absolute bg-gray-500 opacity-50 w-full h-full z-50"> Loading... </div>}
             <div className="bg-white rounded-lg max-h-full overflow-scroll p-6 w-full max-w-lg">
-                <h2 className="text-2xl font-bold mb-4">Selected Images</h2>
+
+                <div className="flex justify-between ">
+                    <h2 className="text-2xl font-bold mb-4">Selected Images</h2>
+                    <MdClose
+                        onClick={() => {
+                            setSelectedImages([])
+                            onClose()
+                        }}
+                        className="hover:cursor-pointer text-2xl" />
+                </div>
                 <div className="grid grid-cols-3 gap-4 mb-4">
                     {selectedImages.map((image, index) => (
                         <img
@@ -214,19 +229,21 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
                         />
                     ))}
                 </div>
-                <div className="flex justify-between">
-                    <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                        Select Images
-                    </button>
-                    <button
-                        onClick={handleUpload}
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                        Upload
-                    </button>
+                <div className="flex flex-col justify-between items-center w-full">
+                    {
+                        !selectedImages.length ? <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Browse
+                        </button> :
+                            <button
+                                onClick={handleUpload}
+                                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Upload
+                            </button>
+                    }
                 </div>
                 <input
                     type="file"
@@ -236,12 +253,6 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
                     accept="image/*"
                     className="hidden"
                 />
-                <button
-                    onClick={onClose}
-                    className="mt-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-                >
-                    Close
-                </button>
             </div>
         </div>
     );
