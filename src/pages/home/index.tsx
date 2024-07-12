@@ -26,6 +26,7 @@ type displayImagesType = {
 type ImageDialogProps = {
     isOpen: boolean;
     onClose: () => void;
+    folderId: string | null
     displayImages: displayImagesType[] | null
     setDisplayImages: React.Dispatch<React.SetStateAction<displayImagesType[] | null>>
 }
@@ -139,12 +140,15 @@ const Home = () => {
                         <form onSubmit={handleCreateFolder} className="flex gap-2 border-y p-2 border-gray-400">
                             <FaFolder className="text-yellow-500 text-2xl" />
                             <input type="text"
+                                autoFocus={true}
                                 onChange={handleChange}
                                 value={newFolder}
-                                className="border-b border-gray-400" />
+                                className="focus:border-none outline-none border border-gray-300 rounded-sm px-1 bg-blue-200" />
                         </form> :
                         <div
-                            onClick={() => setIsNewFolder(true)}
+                            onClick={() => {
+                                setIsNewFolder(true)
+                            }}
                             className="flex items-center font-semibold gap-2 border-y p-2 border-gray-400 hover:cursor-pointer">
                             <FaFolderPlus className="text-blue-400 text-2xl" />
                             Add New Folder
@@ -178,12 +182,13 @@ const Home = () => {
                 isOpen={isDialogOpen}
                 displayImages={displayImages}
                 setDisplayImages={setDisplayImages}
+                folderId={folderId}
             />
         </div>
     )
 }
 
-const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImages, setDisplayImages }) => {
+const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImages, setDisplayImages, folderId }) => {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isLoading, setIsLoading] = useState(false)
@@ -193,7 +198,7 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
             const newImages = Array.from(event.target.files);
             setSelectedImages((prevImages) => [...prevImages, ...newImages]);
         }
-    };
+    }; 
 
     const handleUpload = async () => {
         try {
@@ -204,13 +209,16 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
                 console.log("data", formData)
             });
 
+            if (folderId)
+                formData.append('parent', folderId)
+
             const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/image/new`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
             });
 
-            const newDisplayImages = displayImages ? [response.data.data, ...displayImages] : [response.data.data.folder];
+            const newDisplayImages = displayImages ? [...response.data.data, ...displayImages] : [...response.data.data.folder];
             setDisplayImages(newDisplayImages);
             setSelectedImages([]);
             onClose();
