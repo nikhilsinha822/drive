@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios, { isAxiosError } from 'axios';
+import Loading from '../../component/loader'
 
 const Image = () => {
     const params = useParams();
@@ -38,7 +39,7 @@ const Image = () => {
         <div className="">
             {
                 isLoading ?
-                    <div>Loading...</div>
+                    <div><Loading /></div>
                     :
                     error ? (
                         <div>{error}</div>

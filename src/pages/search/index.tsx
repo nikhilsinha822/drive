@@ -4,6 +4,7 @@ import axios, { isAxiosError } from "axios";
 import { FaImage, FaSearch } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
 import { useDebounce } from 'use-debounce';
+import Loading from '../../component/loader'
 
 type displayImagesType = {
     _id: string;
@@ -73,7 +74,7 @@ const Search = () => {
             </div>
 
             {isLoading ? (
-                <div className="text-center py-4 text-gray-500">Loading ...</div>
+                <div className="text-center py-4 text-gray-500"><Loading/></div>
             ) : (
                 <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                     {!displayImages?.length ? (

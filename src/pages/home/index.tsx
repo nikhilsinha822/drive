@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 import { FaFolder, FaFolderPlus } from "react-icons/fa";
 import { FaImage } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
+import Loading from '../../component/loader'
 
 type displayFoldersType = {
     _id: string;
@@ -224,10 +225,10 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
 
     return (
         <div className="fixed inset-0 z-10 p-5 overflow-hidden flex items-center justify-center bg-black bg-opacity-50">
-            {isLoading && <div className="absolute bg-gray-500 opacity-50 w-full h-full z-50"> Loading... </div>}
-            <div className="bg-white rounded-lg max-h-full overflow-scroll p-6 w-full max-w-lg">
+            {isLoading && <div className="absolute bg-gray-500 opacity-50 w-full h-full z-50"> <Loading /> </div>}
+            <div className="bg-white rounded-lg min-h-96 max-h-full overflow-scroll scrollbar-none p-6 w-full max-w-lg">
 
-                <div className="flex justify-between ">
+                <div className="flex justify-between">
                     <h2 className="text-2xl font-bold mb-4">Selected Images</h2>
                     <MdClose
                         onClick={() => {
@@ -250,7 +251,7 @@ const ImageDialog: React.FC<ImageDialogProps> = ({ isOpen, onClose, displayImage
                     {
                         !selectedImages.length ? <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-20"
                         >
                             Browse
                         </button> :
