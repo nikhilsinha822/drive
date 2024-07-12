@@ -3,6 +3,7 @@ import Home from "./pages/home"
 import Login from "./pages/(auth)/login"
 import Register from "./pages/(auth)/register"
 import Image from "./pages/viewImage"
+import Search from "./pages/search"
 import axios from "axios"
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
         <Route index element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/Search" element={<Search />} />
         <Route path="/image/:imageId" element={<Image />} />
       </Route>
     </Routes>

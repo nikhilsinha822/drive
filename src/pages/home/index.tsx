@@ -73,6 +73,11 @@ const Home = () => {
         setNewFolder(value)
     }
 
+    const handleLogout = async () => {
+        await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/logout`);
+        navigate('/login');
+    }
+
     useEffect(() => {
         const fetchFolder = async () => {
             try {
@@ -109,6 +114,18 @@ const Home = () => {
                     className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
                 >
                     Upload Image
+                </button>
+                <button
+                    onClick={() => navigate('/search')}
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
+                >
+                    Search Image
+                </button>
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                >
+                    Logout
                 </button>
             </div>
             <div className="border border-gray-400 rounded-md p-10 m-5 mx-auto md:w-4/5">
