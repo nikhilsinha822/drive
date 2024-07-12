@@ -6,9 +6,11 @@ import Register from "./pages/(auth)/register"
 const App = () => {
   return (
     <Routes>
-      <Route path="/" index element={<Home />} />
-      <Route path="/login" index element={<Login />} />
-      <Route path="/register" index element={<Register />} />
+      <Route path='/'>
+        <Route index element={<Home />} />
+        <Route path="/login" index element={<Login />} />
+        <Route path="/register" index element={<Register />} />
+      </Route>
     </Routes>
   )
 }
