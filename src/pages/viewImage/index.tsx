@@ -36,7 +36,7 @@ const Image = () => {
     }, [imageId]);
 
     return (
-        <div className="">
+        <div className="w-full h-screen flex items-center justify-center">
             {
                 isLoading ?
                     <div><Loading /></div>
